@@ -1,13 +1,9 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { nanoid } from 'nanoid';
 
 import ContactForm from './contactForm/ContactForm';
 import FilterName from './FilterName/FilterName';
 import ContactList from './ContactList/ContactList';
-
-const STATE = {
-  filter: '',
-};
 
 const App = () => {
   const [contacts, setContacts] = useState([
@@ -18,12 +14,10 @@ const App = () => {
   ]);
   const [filter, setFilter] = useState('');
 
-  const addNewContact = ({ name, number }) => {
+  const addNewContact = (name, number) => {
     contacts.find(contact => contact.name === name)
       ? alert(`${name} is already in contacts.`)
-      : this.setState({
-          contacts: [...contacts, { name, number, id: nanoid() }],
-        });
+      : setContacts([...contacts, { name, number, id: nanoid() }]);
     localStorage.setItem('contacts', JSON.stringify(contacts));
   };
 
@@ -43,19 +37,11 @@ const App = () => {
   useEffect(() => {
     const savedSettings = localStorage.getItem('contacts');
     const parsedSettings = JSON.parse(savedSettings);
-    console.log(parsedSettings);
-    if (parsedSettings !== null) setContacts({ contacts: parsedSettings });
+
+    return () => {
+      if (parsedSettings !== null) setContacts(parsedSettings);
+    };
   }, []);
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   const oldState = this.state;
-
-  //   if (nextState.contacts === oldState.contacts) {
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
 
   useEffect(() => {
     localStorage.setItem('contacts', JSON.stringify(contacts));
